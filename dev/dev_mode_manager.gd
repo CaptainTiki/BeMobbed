@@ -21,9 +21,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_F1:
-			dev_mode_enabled = not dev_mode_enabled
+	if event.is_action_pressed("dev_toggle_mode"):
+		dev_mode_enabled = not dev_mode_enabled
 
 
 func is_dev_mode_enabled() -> bool:

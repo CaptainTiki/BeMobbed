@@ -20,31 +20,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		_pitch = clamp(_pitch - event.relative.y * mouse_sensitivity, deg_to_rad(-89.0), deg_to_rad(89.0))
 		camera.rotation.x = _pitch
 
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_ESCAPE:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		elif event.keycode == KEY_ENTER and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if event.is_action_pressed("player_release_mouse"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif event.is_action_pressed("player_capture_mouse") and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
 func _physics_process(_delta: float) -> void:
 	var input_dir := Vector3.ZERO
 
-	if Input.is_physical_key_pressed(KEY_W):
+	if Input.is_action_pressed("player_move_forward"):
 		input_dir -= basis.z
-	if Input.is_physical_key_pressed(KEY_S):
+	if Input.is_action_pressed("player_move_back"):
 		input_dir += basis.z
-	if Input.is_physical_key_pressed(KEY_A):
+	if Input.is_action_pressed("player_move_left"):
 		input_dir -= basis.x
-	if Input.is_physical_key_pressed(KEY_D):
+	if Input.is_action_pressed("player_move_right"):
 		input_dir += basis.x
-	if Input.is_physical_key_pressed(KEY_SPACE):
+	if Input.is_action_pressed("player_move_up"):
 		input_dir += Vector3.UP
-	if Input.is_physical_key_pressed(KEY_CTRL):
+	if Input.is_action_pressed("player_move_down"):
 		input_dir -= Vector3.UP
 
 	var speed := move_speed
-	if Input.is_physical_key_pressed(KEY_SHIFT):
+	if Input.is_action_pressed("player_move_fast"):
 		speed *= fast_move_multiplier
 
 	velocity = input_dir.normalized() * speed if input_dir.length_squared() > 0.0 else Vector3.ZERO
