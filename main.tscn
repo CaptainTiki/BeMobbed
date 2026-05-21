@@ -1,11 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://ba3f6mvbwt4q8"]
+[gd_scene format=3 uid="uid://ba3f6mvbwt4q8"]
 
 [ext_resource type="PackedScene" uid="uid://b5ad1ey3y74tr" path="res://world/levels/level.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://c122sawr3nmsn" path="res://player/player_controller.tscn" id="1_player"]
-[ext_resource type="Script" path="res://dev/dev_mode_manager.gd" id="3_dev_mode_manager"]
+[ext_resource type="Script" uid="uid://dhi0are4u3wsu" path="res://dev/dev_mode_manager.gd" id="3_dev_mode_manager"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dev_status"]
-font_size = 16
 font_color = Color(0.85, 0.95, 1, 1)
 outline_size = 3
 outline_color = Color(0, 0, 0, 1)
@@ -19,19 +18,19 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2146067698]
 
-[node name="Managers" type="Node" parent="." unique_id=1198115869]
-
-[node name="DevModeManager" type="Node" parent="Managers"]
-script = ExtResource("3_dev_mode_manager")
-status_label_path = NodePath("../../UI/DevStatusLabel")
-
-[node name="DevStatusLabel" type="Label" parent="UI"]
+[node name="DevStatusLabel" type="Label" parent="UI" unique_id=318238731]
 offset_left = 12.0
 offset_top = 12.0
 offset_right = 180.0
 offset_bottom = 42.0
 text = "DEV MODE ON"
 label_settings = SubResource("LabelSettings_dev_status")
+
+[node name="Managers" type="Node" parent="." unique_id=1198115869]
+
+[node name="DevModeManager" type="Node" parent="Managers" unique_id=1236213582]
+script = ExtResource("3_dev_mode_manager")
+status_label_path = NodePath("../../UI/DevStatusLabel")
 
 [editable path="Level"]
 [editable path="Player"]
