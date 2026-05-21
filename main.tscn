@@ -1,10 +1,13 @@
-[gd_scene format=3 uid="uid://bemobbed_main"]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://player/player_controller.tscn" id="1_player"]
 
 [node name="Main" type="Node3D"]
 
 [node name="World" type="Node3D" parent="."]
 
-[node name="Player" type="Node3D" parent="."]
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 4, 10)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -13,7 +16,3 @@
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 8, 0)
 light_energy = 1.5
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 6, 10)
-current = true
