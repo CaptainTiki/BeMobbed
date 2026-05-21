@@ -1,8 +1,11 @@
-[gd_scene format=3 uid="uid://b5ad1ey3y74tr"]
+[gd_scene load_steps=7 format=3 uid="uid://b5ad1ey3y74tr"]
 
+[ext_resource type="Script" path="res://world/levels/level.gd" id="1_level"]
 [ext_resource type="Script" path="res://world/world_grid.gd" id="1_world_grid"]
 [ext_resource type="Script" path="res://world/terrain_test_arena.gd" id="2_terrain_test_arena"]
 [ext_resource type="Script" path="res://world/grid_overlay.gd" id="3_grid_overlay"]
+[ext_resource type="Script" path="res://world/pathability_overlay.gd" id="4_pathability_overlay"]
+[ext_resource type="Script" path="res://world/terrain_dev_editor.gd" id="5_terrain_dev_editor"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tsmjm"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -18,6 +21,7 @@ tonemap_mode = 2
 glow_enabled = true
 
 [node name="Level" type="Node3D" unique_id=1570311619]
+script = ExtResource("1_level")
 
 [node name="WorldGrid" type="Node" parent="."]
 script = ExtResource("1_world_grid")
@@ -29,6 +33,15 @@ world_grid_path = NodePath("../WorldGrid")
 [node name="GridOverlay" type="MeshInstance3D" parent="."]
 script = ExtResource("3_grid_overlay")
 world_grid_path = NodePath("../WorldGrid")
+
+[node name="PathabilityOverlay" type="Node3D" parent="."]
+script = ExtResource("4_pathability_overlay")
+world_grid_path = NodePath("../WorldGrid")
+
+[node name="TerrainDevEditor" type="Node3D" parent="."]
+script = ExtResource("5_terrain_dev_editor")
+world_grid_path = NodePath("../WorldGrid")
+dev_mode_manager_path = NodePath("../../Managers/DevModeManager")
 
 [node name="Environment" type="Node3D" parent="." unique_id=766028171]
 

@@ -24,6 +24,8 @@ func rebuild() -> void:
 	if world_grid == null:
 		push_warning("GridOverlay needs a WorldGrid node")
 		return
+	if not world_grid.terrain_changed.is_connected(rebuild):
+		world_grid.terrain_changed.connect(rebuild)
 
 	var cells: Dictionary = world_grid.get_all_cells()
 	var grid_size: Vector2i = world_grid.grid_size
@@ -47,17 +49,16 @@ func _create_material() -> void:
 
 
 func _add_cell_outline(overlay_mesh: ImmediateMesh, cell: Vector2i, data: Dictionary, half_size: Vector2) -> void:
-	var height := float(data.get("height", 0))
 	var min_x := float(cell.x) * cell_size - half_size.x
 	var max_x := min_x + cell_size
 	var min_z := float(cell.y) * cell_size - half_size.y
 	var max_z := min_z + cell_size
-	var y := height + height_offset
+	var top_heights := TerrainSurface.get_top_corner_heights(data)
 
-	var a := Vector3(min_x, y, min_z)
-	var b := Vector3(max_x, y, min_z)
-	var c := Vector3(max_x, y, max_z)
-	var d := Vector3(min_x, y, max_z)
+	var a := Vector3(min_x, top_heights[0] + height_offset, min_z)
+	var b := Vector3(max_x, top_heights[1] + height_offset, min_z)
+	var c := Vector3(max_x, top_heights[2] + height_offset, max_z)
+	var d := Vector3(min_x, top_heights[3] + height_offset, max_z)
 
 	_add_line(overlay_mesh, a, b)
 	_add_line(overlay_mesh, b, c)

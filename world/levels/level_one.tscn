@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://db7xsku5fexcn"]
+
+[ext_resource type="PackedScene" uid="uid://b5ad1ey3y74tr" path="res://world/levels/level.tscn" id="1_level"]
+[ext_resource type="Script" uid="uid://dgywl3n1lq62b" path="res://world/levels/level_one.gd" id="2_level_one"]
+
+[node name="LevelOne" unique_id=1479282682 instance=ExtResource("1_level")]
+script = ExtResource("2_level_one")
+terrain_file_path = "res://world/terrain/level_one_terrain.json"
