@@ -37,6 +37,21 @@ static func get_edge_heights(data: Dictionary, direction: int) -> PackedFloat32A
 	return PackedFloat32Array([heights[0], heights[1]])
 
 
+static func get_edge_average_height(data: Dictionary, direction: int) -> float:
+	var edge_heights := get_edge_heights(data, direction)
+	return (edge_heights[0] + edge_heights[1]) * 0.5
+
+
+static func get_shared_edge_height_delta(from_data: Dictionary, to_data: Dictionary, direction: int) -> float:
+	var from_heights := get_edge_heights(from_data, direction)
+	var to_heights := get_edge_heights(to_data, _opposite_direction(direction))
+	return max(abs(from_heights[0] - to_heights[1]), abs(from_heights[1] - to_heights[0]))
+
+
+static func _opposite_direction(direction: int) -> int:
+	return (direction + 2) % 4
+
+
 static func _apply_straight_slope_heights(top_heights: PackedFloat32Array, height: float, slope_direction: int) -> void:
 	var high := height + 1.0
 	match slope_direction:

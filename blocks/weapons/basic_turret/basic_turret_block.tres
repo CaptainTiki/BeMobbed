@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="BlockDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://blocks/block_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://blocks/weapons/basic_turret/basic_turret.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_definition")
+id = &"basic_turret"
+display_name = "Basic Turret"
+category = "Weapons"
+description = "A placeholder turret block with no combat behavior yet."
+scene = ExtResource("2_scene")
+footprint = Vector2i(1, 1)
+blocks_building = true
+blocks_movement = true
+requires_flat_ground = true

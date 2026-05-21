@@ -12,6 +12,11 @@ const DIRECTION_NORTH := 0
 const DIRECTION_EAST := 1
 const DIRECTION_SOUTH := 2
 const DIRECTION_WEST := 3
+const EDGE_HEIGHT_EPSILON := 0.01
+const OFFSET_NORTH := Vector2i(0, -1)
+const OFFSET_EAST := Vector2i(1, 0)
+const OFFSET_SOUTH := Vector2i(0, 1)
+const OFFSET_WEST := Vector2i(-1, 0)
 
 @export var grid_size := Vector2i(64, 64)
 @export var default_height := 0
@@ -38,7 +43,8 @@ func initialize_flat_grid() -> void:
 				"buildable": true,
 				"slope_type": SLOPE_FLAT,
 				"slope_direction": DIRECTION_NORTH,
-				"occupied": false,
+				"build_occupied": false,
+				"movement_occupied": false,
 				"path_cost": default_path_cost,
 			}
 
@@ -99,21 +105,73 @@ func get_height(cell: Vector2i) -> int:
 
 func is_walkable(cell: Vector2i) -> bool:
 	var data := get_cell(cell)
-	return not data.is_empty() and data.get("walkable", false) and not data.get("occupied", false)
+	return not data.is_empty() and data.get("walkable", false) and not data.get("movement_occupied", false)
 
 
 func is_buildable(cell: Vector2i) -> bool:
 	var data := get_cell(cell)
-	return not data.is_empty() and data.get("buildable", false) and not data.get("occupied", false)
+	return not data.is_empty() and data.get("buildable", false) and not data.get("build_occupied", false)
 
 
-func set_occupied(cell: Vector2i, value: bool) -> void:
+func can_traverse_between(from_cell: Vector2i, to_cell: Vector2i) -> bool:
+	if not is_in_bounds(from_cell) or not is_in_bounds(to_cell):
+		return false
+	if not is_walkable(from_cell) or not is_walkable(to_cell):
+		return false
+
+	var delta := to_cell - from_cell
+	if abs(delta.x) + abs(delta.y) != 1:
+		return false
+
+	var direction := _offset_to_direction(delta)
+	if direction < 0:
+		return false
+
+	var from_data := get_cell(from_cell)
+	var to_data := get_cell(to_cell)
+	return TerrainSurface.get_shared_edge_height_delta(from_data, to_data, direction) <= EDGE_HEIGHT_EPSILON
+
+
+func get_pathable_neighbors(cell: Vector2i) -> Array[Vector2i]:
+	var neighbors: Array[Vector2i] = []
+	for offset in _cardinal_offsets():
+		var neighbor := cell + offset
+		if can_traverse_between(cell, neighbor):
+			neighbors.append(neighbor)
+
+	return neighbors
+
+
+func set_build_occupied(cell: Vector2i, value: bool) -> void:
+	if not is_in_bounds(cell):
+		push_warning("Tried to set build occupancy out of bounds at %s" % cell)
+		return
+
+	_cells[cell]["build_occupied"] = value
+	terrain_changed.emit()
+
+
+func set_movement_occupied(cell: Vector2i, value: bool) -> void:
+	if not is_in_bounds(cell):
+		push_warning("Tried to set movement occupancy out of bounds at %s" % cell)
+		return
+
+	_cells[cell]["movement_occupied"] = value
+	terrain_changed.emit()
+
+
+func set_occupancy(cell: Vector2i, build_value: bool, movement_value: bool) -> void:
 	if not is_in_bounds(cell):
 		push_warning("Tried to set occupancy out of bounds at %s" % cell)
 		return
 
-	_cells[cell]["occupied"] = value
+	_cells[cell]["build_occupied"] = build_value
+	_cells[cell]["movement_occupied"] = movement_value
 	terrain_changed.emit()
+
+
+func set_occupied(cell: Vector2i, value: bool) -> void:
+	set_occupancy(cell, value, value)
 
 
 func set_cell_terrain(
@@ -138,8 +196,8 @@ func set_cell_terrain(
 	terrain_changed.emit()
 
 
-func get_path_cost(cell: Vector2i) -> int:
-	return get_cell(cell).get("path_cost", default_path_cost)
+func get_path_cost(cell: Vector2i) -> float:
+	return float(get_cell(cell).get("path_cost", default_path_cost))
 
 
 func raise_cell(cell: Vector2i, amount: int = 1) -> void:
@@ -237,7 +295,8 @@ func to_terrain_data() -> Dictionary:
 			"buildable": bool(data.get("buildable", true)),
 			"slope_type": String(data.get("slope_type", SLOPE_FLAT)),
 			"slope_direction": int(data.get("slope_direction", DIRECTION_NORTH)),
-			"occupied": bool(data.get("occupied", false)),
+			"build_occupied": bool(data.get("build_occupied", false)),
+			"movement_occupied": bool(data.get("movement_occupied", false)),
 			"path_cost": int(data.get("path_cost", default_path_cost)),
 		})
 
@@ -271,6 +330,8 @@ func load_terrain_data(data: Dictionary) -> void:
 		if not is_in_bounds(cell):
 			continue
 
+		var legacy_occupied := bool(raw_cell.get("occupied", false))
+
 		_cells[cell] = {
 			"cell_x": cell.x,
 			"cell_z": cell.y,
@@ -279,7 +340,8 @@ func load_terrain_data(data: Dictionary) -> void:
 			"buildable": bool(raw_cell.get("buildable", true)),
 			"slope_type": StringName(raw_cell.get("slope_type", String(SLOPE_FLAT))),
 			"slope_direction": int(raw_cell.get("slope_direction", DIRECTION_NORTH)),
-			"occupied": bool(raw_cell.get("occupied", false)),
+			"build_occupied": bool(raw_cell.get("build_occupied", legacy_occupied)),
+			"movement_occupied": bool(raw_cell.get("movement_occupied", legacy_occupied)),
 			"path_cost": int(raw_cell.get("path_cost", default_path_cost)),
 		}
 
@@ -301,3 +363,26 @@ func _ensure_parent_directory(path: String) -> void:
 		return
 
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(base_dir))
+
+
+func _cardinal_offsets() -> Array[Vector2i]:
+	return [
+		OFFSET_NORTH,
+		OFFSET_EAST,
+		OFFSET_SOUTH,
+		OFFSET_WEST,
+	]
+
+
+func _offset_to_direction(offset: Vector2i) -> int:
+	match offset:
+		OFFSET_NORTH:
+			return DIRECTION_NORTH
+		OFFSET_EAST:
+			return DIRECTION_EAST
+		OFFSET_SOUTH:
+			return DIRECTION_SOUTH
+		OFFSET_WEST:
+			return DIRECTION_WEST
+
+	return -1

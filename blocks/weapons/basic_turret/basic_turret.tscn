@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://blocks/weapons/basic_turret/basic_turret.gd" id="1_script"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+top_radius = 0.38
+bottom_radius = 0.46
+height = 0.35
+
+[sub_resource type="StandardMaterial3D" id="Material_base"]
+albedo_color = Color(0.18, 0.22, 0.25, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="BoxMesh_head"]
+size = Vector3(0.62, 0.32, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Material_head"]
+albedo_color = Color(0.5, 0.22, 0.16, 1)
+roughness = 0.7
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_barrel"]
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.65
+
+[sub_resource type="BoxShape3D" id="Shape_turret"]
+size = Vector3(0.9, 0.75, 0.9)
+
+[node name="BasicTurret" type="StaticBody3D"]
+script = ExtResource("1_script")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
+mesh = SubResource("CylinderMesh_base")
+material_override = SubResource("Material_base")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
+mesh = SubResource("BoxMesh_head")
+material_override = SubResource("Material_head")
+
+[node name="Barrel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.52, -0.48)
+mesh = SubResource("CylinderMesh_barrel")
+material_override = SubResource("Material_head")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
+shape = SubResource("Shape_turret")

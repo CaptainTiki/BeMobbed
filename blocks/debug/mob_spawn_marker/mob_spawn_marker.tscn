@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://blocks/debug/mob_spawn_marker/mob_spawn_marker.gd" id="1_script"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_marker"]
+top_radius = 0.28
+bottom_radius = 0.42
+height = 0.18
+
+[sub_resource type="StandardMaterial3D" id="Material_marker"]
+albedo_color = Color(0.75, 0.18, 0.5, 1)
+emission_enabled = true
+emission = Color(0.75, 0.12, 0.42, 1)
+emission_energy_multiplier = 0.3
+roughness = 0.7
+
+[sub_resource type="PrismMesh" id="PrismMesh_arrow"]
+size = Vector3(0.34, 0.62, 0.34)
+
+[sub_resource type="BoxShape3D" id="Shape_marker"]
+size = Vector3(0.8, 0.4, 0.8)
+
+[node name="MobSpawnMarker" type="StaticBody3D"]
+script = ExtResource("1_script")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("CylinderMesh_marker")
+material_override = SubResource("Material_marker")
+
+[node name="Arrow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0.5, -0.12)
+mesh = SubResource("PrismMesh_arrow")
+material_override = SubResource("Material_marker")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+shape = SubResource("Shape_marker")

@@ -1,0 +1,2 @@
+extends PlacedBlock
+class_name ArmoredWallBlock

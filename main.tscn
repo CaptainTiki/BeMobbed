@@ -1,9 +1,12 @@
-[gd_scene format=3 uid="uid://ba3f6mvbwt4q8"]
+[gd_scene load_steps=8 format=3 uid="uid://ba3f6mvbwt4q8"]
 
 [ext_resource type="PackedScene" uid="uid://b5ad1ey3y74tr" path="res://world/levels/level.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://c122sawr3nmsn" path="res://player/player_controller.tscn" id="1_player"]
 [ext_resource type="Script" uid="uid://dhi0are4u3wsu" path="res://dev/dev_mode_manager.gd" id="3_dev_mode_manager"]
 [ext_resource type="PackedScene" path="res://ui/dev_terrain_tool.tscn" id="4_dev_terrain_tool"]
+[ext_resource type="Script" path="res://blocks/block_catalog.gd" id="5_block_catalog"]
+[ext_resource type="PackedScene" path="res://ui/generic_hotbar.tscn" id="6_generic_hotbar"]
+[ext_resource type="PackedScene" path="res://ui/block_menu.tscn" id="7_block_menu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_dev_status"]
 font_color = Color(0.85, 0.95, 1, 1)
@@ -11,6 +14,9 @@ outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [node name="Main" type="Node3D" unique_id=1719912373]
+
+[node name="BlockCatalog" type="Node" parent="."]
+script = ExtResource("5_block_catalog")
 
 [node name="Level" parent="." unique_id=1570311619 instance=ExtResource("1_0xm2m")]
 terrain_file_path = "res://world/terrain/level_dev_terrain.json"
@@ -29,6 +35,10 @@ text = "DEV MODE ON"
 label_settings = SubResource("LabelSettings_dev_status")
 
 [node name="DevTerrainTool" parent="UI" unique_id=1021035278 instance=ExtResource("4_dev_terrain_tool")]
+
+[node name="GenericHotbar" parent="UI" instance=ExtResource("6_generic_hotbar")]
+
+[node name="BlockMenu" parent="UI" instance=ExtResource("7_block_menu")]
 
 [node name="Managers" type="Node" parent="." unique_id=1198115869]
 

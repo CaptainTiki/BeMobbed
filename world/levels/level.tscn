@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://b5ad1ey3y74tr"]
+[gd_scene load_steps=10 format=3 uid="uid://b5ad1ey3y74tr"]
 
 [ext_resource type="Script" path="res://world/levels/level.gd" id="1_level"]
 [ext_resource type="Script" path="res://world/world_grid.gd" id="1_world_grid"]
@@ -6,6 +6,9 @@
 [ext_resource type="Script" path="res://world/grid_overlay.gd" id="3_grid_overlay"]
 [ext_resource type="Script" path="res://world/pathability_overlay.gd" id="4_pathability_overlay"]
 [ext_resource type="Script" path="res://world/terrain_dev_editor.gd" id="5_terrain_dev_editor"]
+[ext_resource type="Script" path="res://blocks/block_placement_controller.gd" id="6_block_placement_controller"]
+[ext_resource type="Script" path="res://pathing/flow_field_generator.gd" id="7_flow_field_generator"]
+[ext_resource type="Script" path="res://pathing/flow_field_debug_overlay.gd" id="8_flow_field_debug_overlay"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tsmjm"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -42,6 +45,25 @@ world_grid_path = NodePath("../WorldGrid")
 script = ExtResource("5_terrain_dev_editor")
 world_grid_path = NodePath("../WorldGrid")
 dev_mode_manager_path = NodePath("../../Managers/DevModeManager")
+
+[node name="PlacedBlocks" type="Node3D" parent="."]
+
+[node name="BlockPlacementController" type="Node3D" parent="."]
+script = ExtResource("6_block_placement_controller")
+world_grid_path = NodePath("../WorldGrid")
+placed_blocks_path = NodePath("../PlacedBlocks")
+hotbar_path = NodePath("../../UI/GenericHotbar")
+block_menu_path = NodePath("../../UI/BlockMenu")
+terrain_editor_path = NodePath("../TerrainDevEditor")
+
+[node name="FlowFieldGenerator" type="Node" parent="."]
+script = ExtResource("7_flow_field_generator")
+
+[node name="FlowFieldDebugOverlay" type="Node3D" parent="."]
+script = ExtResource("8_flow_field_debug_overlay")
+world_grid_path = NodePath("../WorldGrid")
+flow_field_generator_path = NodePath("../FlowFieldGenerator")
+placed_blocks_path = NodePath("../PlacedBlocks")
 
 [node name="Environment" type="Node3D" parent="." unique_id=766028171]
 
